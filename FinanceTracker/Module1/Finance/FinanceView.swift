@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct FinanceView: View {
+    @Binding var selectedTab: Int
+
     @EnvironmentObject var store: TransactionStore
     @EnvironmentObject var settings: AppSettings
     @EnvironmentObject var goalStore: GoalStore
@@ -152,7 +154,7 @@ struct FinanceView: View {
             quickAction("plus.circle.fill",  "Add Income",  .green)  { addType = .income;  showAddSheet = true }
             quickAction("minus.circle.fill", "Add Expense", .red)    { addType = .expense; showAddSheet = true }
             quickAction("list.bullet",       "History",     .blue)   { showAllTransactions = true }
-            quickAction("flag.fill",         "Goals",       .orange) { }
+            quickAction("flag.fill",         "Goals",       .orange) { selectedTab = 2 }
         }
     }
 
@@ -206,9 +208,9 @@ struct FinanceView: View {
                                 .animation(.easeInOut, value: insightIndex)
                         }
                     }
-                    Image(systemName: "chevron.right")
-                        .font(.caption2)
-                        .foregroundColor(.secondary)
+//                    Image(systemName: "chevron.right")
+//                        .font(.caption2)π
+//                        .foregroundColor(.secondary)
                 }
                 .padding(.horizontal, 16)
                 .padding(.top, 14)
@@ -220,6 +222,11 @@ struct FinanceView: View {
                     .fixedSize(horizontal: false, vertical: true)
                     .padding(.horizontal, 16)
                     .padding(.bottom, 14)
+                    .id(insightIndex)
+                    .transition(.asymmetric(
+                        insertion: .opacity.combined(with: .move(edge: .trailing)),
+                        removal:   .opacity.combined(with: .move(edge: .leading))
+                    ))
             }
             .frame(maxWidth: .infinity, alignment: .leading)
             .background(
@@ -228,6 +235,7 @@ struct FinanceView: View {
                     .overlay(RoundedRectangle(cornerRadius: 16)
                         .stroke(Color.orange.opacity(0.2), lineWidth: 1))
             )
+            .clipped()
         }
         .buttonStyle(.plain)
     }

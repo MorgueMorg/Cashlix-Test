@@ -350,6 +350,7 @@ struct AddGoalSheet: View {
                                             .foregroundColor(selectedIcon == icon ? selectedColor.color : .secondary)
                                     }
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                         .padding(.vertical, 4)
@@ -359,20 +360,23 @@ struct AddGoalSheet: View {
                     HStack {
                         Text("Color")
                         Spacer()
-                        HStack(spacing: 8) {
+                        HStack(spacing: 10) {
                             ForEach(GoalColor.allCases, id: \.rawValue) { c in
                                 Button {
                                     selectedColor = c
                                 } label: {
                                     Circle()
                                         .fill(c.color)
-                                        .frame(width: 24, height: 24)
+                                        .frame(width: 26, height: 26)
                                         .overlay(
                                             Circle()
-                                                .stroke(Color.white, lineWidth: selectedColor == c ? 2 : 0)
+                                                .stroke(Color.white, lineWidth: selectedColor == c ? 3 : 0)
                                         )
-                                        .shadow(color: c.color.opacity(0.4), radius: selectedColor == c ? 3 : 0)
+                                        .shadow(color: c.color.opacity(0.5), radius: selectedColor == c ? 4 : 0)
+                                        .scaleEffect(selectedColor == c ? 1.15 : 1.0)
+                                        .animation(.spring(response: 0.2), value: selectedColor)
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -404,6 +408,7 @@ struct AddGoalSheet: View {
             } message: {
                 Text("Please enter a goal name and target amount.")
             }
+            .keyboardDoneToolbar()
         }
     }
 

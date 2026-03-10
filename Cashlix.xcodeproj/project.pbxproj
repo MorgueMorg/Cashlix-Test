@@ -35,6 +35,7 @@
 		AAAAAAAAAAAAAAAAAAAA0077 /* GoalDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0076 /* GoalDetailView.swift */; };
 		AAAAAAAAAAAAAAAAAAAA0079 /* AllTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0078 /* AllTransactionsView.swift */; };
 		AAAAAAAAAAAAAAAAAAAA007B /* TransactionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA007A /* TransactionDetailView.swift */; };
+		AAAAAAAAAAAAAAAAAAAA007E /* KeyboardDismiss.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA007D /* KeyboardDismiss.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -68,6 +69,7 @@
 		AAAAAAAAAAAAAAAAAAAA0076 /* GoalDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailView.swift; sourceTree = "<group>"; };
 		AAAAAAAAAAAAAAAAAAAA0078 /* AllTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllTransactionsView.swift; sourceTree = "<group>"; };
 		AAAAAAAAAAAAAAAAAAAA007A /* TransactionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetailView.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAA007D /* KeyboardDismiss.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KeyboardDismiss.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 				AAAAAAAAAAAAAAAAAAAA0028 /* AppConfig.swift */,
 				AAAAAAAAAAAAAAAAAAAA0060 /* AppSettings.swift */,
 				AAAAAAAAAAAAAAAAAAAA0070 /* GoalStore.swift */,
+				AAAAAAAAAAAAAAAAAAAA007D /* KeyboardDismiss.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -290,6 +293,7 @@
 				AAAAAAAAAAAAAAAAAAAA0047 /* AppConfig.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0061 /* AppSettings.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0071 /* GoalStore.swift in Sources */,
+				AAAAAAAAAAAAAAAAAAAA007E /* KeyboardDismiss.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0048 /* SplashView.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0049 /* OnboardingView.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0050 /* OnboardingPage.swift in Sources */,

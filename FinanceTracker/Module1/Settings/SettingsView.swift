@@ -295,6 +295,9 @@ struct BudgetEditorSheet: View {
                 .padding(.horizontal)
                 Spacer()
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity)
+            .dismissKeyboardOnTap()
+            .keyboardDoneToolbar()
             .padding()
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {

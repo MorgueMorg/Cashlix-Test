@@ -31,6 +31,7 @@ struct AddTransactionSheet: View {
                     .background(type == .income
                                 ? Color.green.opacity(0.08)
                                 : Color.red.opacity(0.08))
+                    .dismissKeyboardOnTap()
 
                 // Form
                 Form {
@@ -75,6 +76,7 @@ struct AddTransactionSheet: View {
             } message: {
                 Text("Please enter a valid amount greater than zero.")
             }
+            .keyboardDoneToolbar()
         }
     }
 

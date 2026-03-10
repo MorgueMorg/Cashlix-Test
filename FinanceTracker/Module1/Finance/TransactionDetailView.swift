@@ -290,6 +290,7 @@ struct EditTransactionSheet: View {
             } message: {
                 Text("Please enter a valid amount greater than zero.")
             }
+            .keyboardDoneToolbar()
         }
     }
 

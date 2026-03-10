@@ -343,6 +343,8 @@ struct GoalDetailView: View {
 
                 Spacer()
             }
+            .dismissKeyboardOnTap()
+            .keyboardDoneToolbar()
             .background(Color(.systemGroupedBackground))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
@@ -431,6 +433,7 @@ struct EditGoalSheet: View {
                                         )
                                         .shadow(color: c.color.opacity(0.4), radius: selectedColor == c ? 3 : 0)
                                 }
+                                .buttonStyle(.plain)
                             }
                         }
                     }
@@ -459,6 +462,7 @@ struct EditGoalSheet: View {
             } message: {
                 Text("Please fill in the goal name and a valid target amount.")
             }
+            .keyboardDoneToolbar()
         }
     }
 

@@ -8,8 +8,7 @@ enum ConfigError: Error {
 }
 
 struct ConfigLoader {
-    private static let jsonURLString =
-        "https://drive.google.com/uc?export=download&id=13935lF1Cs8cRQOYRp6pnkK-TalBW5EyU"
+    private static let jsonURLString = "https://drive.google.com/uc?export=download&id=13935lF1Cs8cRQOYRp6pnkK-TalBW5EyU"
     /// test link =https://drive.google.com/uc?export=download&id=1uT4Tt6krFAPgBC4tegqb16Pl32vJz42u
 
     /// Downloads and parses the remote JSON config.

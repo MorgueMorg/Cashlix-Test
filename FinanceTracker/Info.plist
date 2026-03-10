@@ -20,27 +20,19 @@
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
-
-	<!-- Required Device Capabilities -->
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
-
-	<!-- Supported Orientations (all; AppDelegate restricts per module) -->
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
-
-	<!-- Launch screen (inline — no storyboard needed) -->
 	<key>UILaunchScreen</key>
 	<dict>
 		<key>UIColorName</key>
 		<string>LaunchBackground</string>
 	</dict>
-
-	<!-- Scene configuration for SwiftUI lifecycle -->
 	<key>UIApplicationSceneManifest</key>
 	<dict>
 		<key>UIApplicationSupportsMultipleScenes</key>
@@ -48,24 +40,25 @@
 		<key>UISceneConfigurations</key>
 		<dict/>
 	</dict>
-
-	<!-- Camera and microphone (required for WebView content) -->
 	<key>NSCameraUsageDescription</key>
 	<string>Camera access is required for web content features.</string>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Microphone access is required for web content features.</string>
-
-	<!-- Allow HTTP traffic (NSAllowsArbitraryLoads) for Module 2 -->
 	<key>NSAppTransportSecurity</key>
 	<dict>
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
-
-	<!-- Status bar -->
 	<key>UIStatusBarStyle</key>
 	<string>UIStatusBarStyleDefault</string>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>NSAppTransportSecurity</key>
+	<dict>
+    <key>NSAllowsArbitraryLoadsInWebContent</key>
+    <true/>
+	</dict>
+	<key>NSCameraUsageDescription</key>
+	<string>Camera access is required to use this feature.</string>
 </dict>
 </plist>

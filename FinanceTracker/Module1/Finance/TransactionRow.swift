@@ -7,34 +7,43 @@ struct TransactionRow: View {
 
     var body: some View {
         HStack(spacing: 14) {
-            Image(systemName: transaction.category.icon)
-                .font(.system(size: 16, weight: .semibold))
-                .foregroundColor(transaction.type.color)
-                .frame(width: 42, height: 42)
-                .background(transaction.type.color.opacity(0.12))
-                .clipShape(Circle())
+            ZStack {
+                Circle()
+                    .fill(transaction.category.color.opacity(0.14))
+                    .frame(width: 44, height: 44)
+                Image(systemName: transaction.category.icon)
+                    .font(.system(size: 17, weight: .medium))
+                    .foregroundColor(transaction.category.color)
+            }
 
             VStack(alignment: .leading, spacing: 3) {
-                Text(transaction.category.rawValue)
-                    .font(.subheadline.weight(.semibold))
+                Text(transaction.category.displayName)
+                    .font(.subheadline)
+                    .fontWeight(.semibold)
 
-                if !transaction.note.isEmpty {
-                    Text(transaction.note)
+                if let note = transaction.note, !note.isEmpty {
+                    Text(note)
                         .font(.caption)
                         .foregroundColor(.secondary)
                         .lineLimit(1)
+                } else {
+                    Text(transaction.date, style: .date)
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
                 }
-
-                Text(transaction.date, style: .date)
-                    .font(.caption2)
-                    .foregroundColor(.secondary)
             }
 
             Spacer()
 
-            Text((transaction.type == .income ? "+" : "−") + settings.formatAmount(transaction.amount))
-                .font(.subheadline.bold())
-                .foregroundColor(transaction.type.color)
+            VStack(alignment: .trailing, spacing: 2) {
+                Text((transaction.type == .income ? "+" : "−") + settings.formatAmount(transaction.amount))
+                    .font(.subheadline)
+                    .fontWeight(.bold)
+                    .foregroundColor(transaction.type.color)
+                Text(transaction.date, style: .time)
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
         }
         .padding(.horizontal, 16)
         .padding(.vertical, 12)

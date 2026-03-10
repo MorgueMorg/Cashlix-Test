@@ -19,6 +19,7 @@ private struct AppRoot: View {
         RootView()
             .environmentObject(AppState.shared)
             .environmentObject(TransactionStore.shared)
+            .environmentObject(GoalStore.shared)
             .environmentObject(settings)
             .preferredColorScheme(settings.colorScheme.colorScheme)
     }

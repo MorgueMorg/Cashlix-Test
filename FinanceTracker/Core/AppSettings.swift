@@ -9,6 +9,7 @@ enum ColorSchemePreference: String, CaseIterable, Identifiable {
     case dark   = "Dark"
 
     var id: String { rawValue }
+    var label: String { rawValue }
 
     var colorScheme: ColorScheme? {
         switch self {
@@ -33,6 +34,9 @@ struct CurrencyOption: Identifiable {
     let id: String      // ISO code, e.g. "USD"
     let symbol: String
     let name: String
+    let flag: String    // emoji flag
+
+    var code: String { id }
 }
 
 // MARK: - AppSettings
@@ -57,14 +61,14 @@ final class AppSettings: ObservableObject {
     }
 
     static let currencies: [CurrencyOption] = [
-        CurrencyOption(id: "USD", symbol: "$",  name: "US Dollar"),
-        CurrencyOption(id: "EUR", symbol: "€",  name: "Euro"),
-        CurrencyOption(id: "GBP", symbol: "£",  name: "British Pound"),
-        CurrencyOption(id: "RUB", symbol: "₽",  name: "Russian Ruble"),
-        CurrencyOption(id: "UAH", symbol: "₴",  name: "Ukrainian Hryvnia"),
-        CurrencyOption(id: "KZT", symbol: "₸",  name: "Kazakhstani Tenge"),
-        CurrencyOption(id: "JPY", symbol: "¥",  name: "Japanese Yen"),
-        CurrencyOption(id: "CNY", symbol: "¥",  name: "Chinese Yuan"),
+        CurrencyOption(id: "USD", symbol: "$",  name: "US Dollar",          flag: "🇺🇸"),
+        CurrencyOption(id: "EUR", symbol: "€",  name: "Euro",               flag: "🇪🇺"),
+        CurrencyOption(id: "GBP", symbol: "£",  name: "British Pound",      flag: "🇬🇧"),
+        CurrencyOption(id: "RUB", symbol: "₽",  name: "Russian Ruble",      flag: "🇷🇺"),
+        CurrencyOption(id: "UAH", symbol: "₴",  name: "Ukrainian Hryvnia",  flag: "🇺🇦"),
+        CurrencyOption(id: "KZT", symbol: "₸",  name: "Kazakhstani Tenge",  flag: "🇰🇿"),
+        CurrencyOption(id: "JPY", symbol: "¥",  name: "Japanese Yen",       flag: "🇯🇵"),
+        CurrencyOption(id: "CNY", symbol: "¥",  name: "Chinese Yuan",       flag: "🇨🇳"),
     ]
 
     private init() {

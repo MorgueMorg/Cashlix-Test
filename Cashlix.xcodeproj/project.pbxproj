@@ -29,6 +29,12 @@
 		AAAAAAAAAAAAAAAAAAAA0063 /* MainTabView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0062 /* MainTabView.swift */; };
 		AAAAAAAAAAAAAAAAAAAA0066 /* StatsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0065 /* StatsView.swift */; };
 		AAAAAAAAAAAAAAAAAAAA0069 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0068 /* SettingsView.swift */; };
+		AAAAAAAAAAAAAAAAAAAA0071 /* GoalStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0070 /* GoalStore.swift */; };
+		AAAAAAAAAAAAAAAAAAAA0073 /* GoalModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0072 /* GoalModel.swift */; };
+		AAAAAAAAAAAAAAAAAAAA0075 /* GoalsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0074 /* GoalsView.swift */; };
+		AAAAAAAAAAAAAAAAAAAA0077 /* GoalDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0076 /* GoalDetailView.swift */; };
+		AAAAAAAAAAAAAAAAAAAA0079 /* AllTransactionsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA0078 /* AllTransactionsView.swift */; };
+		AAAAAAAAAAAAAAAAAAAA007B /* TransactionDetailView.swift in Sources */ = {isa = PBXBuildFile; fileRef = AAAAAAAAAAAAAAAAAAAA007A /* TransactionDetailView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -56,6 +62,12 @@
 		AAAAAAAAAAAAAAAAAAAA0062 /* MainTabView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainTabView.swift; sourceTree = "<group>"; };
 		AAAAAAAAAAAAAAAAAAAA0065 /* StatsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StatsView.swift; sourceTree = "<group>"; };
 		AAAAAAAAAAAAAAAAAAAA0068 /* SettingsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsView.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAA0070 /* GoalStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalStore.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAA0072 /* GoalModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalModel.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAA0074 /* GoalsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalsView.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAA0076 /* GoalDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GoalDetailView.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAA0078 /* AllTransactionsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllTransactionsView.swift; sourceTree = "<group>"; };
+		AAAAAAAAAAAAAAAAAAAA007A /* TransactionDetailView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionDetailView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -115,6 +127,7 @@
 				AAAAAAAAAAAAAAAAAAAA0027 /* ConfigLoader.swift */,
 				AAAAAAAAAAAAAAAAAAAA0028 /* AppConfig.swift */,
 				AAAAAAAAAAAAAAAAAAAA0060 /* AppSettings.swift */,
+				AAAAAAAAAAAAAAAAAAAA0070 /* GoalStore.swift */,
 			);
 			path = Core;
 			sourceTree = "<group>";
@@ -127,6 +140,7 @@
 				AAAAAAAAAAAAAAAAAAAA0016 /* Finance */,
 				AAAAAAAAAAAAAAAAAAAA0064 /* Stats */,
 				AAAAAAAAAAAAAAAAAAAA0067 /* Settings */,
+				AAAAAAAAAAAAAAAAAAAA007C /* Goals */,
 			);
 			path = Module1;
 			sourceTree = "<group>";
@@ -158,6 +172,8 @@
 				AAAAAAAAAAAAAAAAAAAA0035 /* BalanceChartView.swift */,
 				AAAAAAAAAAAAAAAAAAAA0036 /* Transaction.swift */,
 				AAAAAAAAAAAAAAAAAAAA0037 /* TransactionStore.swift */,
+				AAAAAAAAAAAAAAAAAAAA0078 /* AllTransactionsView.swift */,
+				AAAAAAAAAAAAAAAAAAAA007A /* TransactionDetailView.swift */,
 			);
 			path = Finance;
 			sourceTree = "<group>";
@@ -176,6 +192,16 @@
 				AAAAAAAAAAAAAAAAAAAA0068 /* SettingsView.swift */,
 			);
 			path = Settings;
+			sourceTree = "<group>";
+		};
+		AAAAAAAAAAAAAAAAAAAA007C /* Goals */ = {
+			isa = PBXGroup;
+			children = (
+				AAAAAAAAAAAAAAAAAAAA0072 /* GoalModel.swift */,
+				AAAAAAAAAAAAAAAAAAAA0074 /* GoalsView.swift */,
+				AAAAAAAAAAAAAAAAAAAA0076 /* GoalDetailView.swift */,
+			);
+			path = Goals;
 			sourceTree = "<group>";
 		};
 		AAAAAAAAAAAAAAAAAAAA0017 /* Module2 */ = {
@@ -263,6 +289,7 @@
 				AAAAAAAAAAAAAAAAAAAA0046 /* ConfigLoader.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0047 /* AppConfig.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0061 /* AppSettings.swift in Sources */,
+				AAAAAAAAAAAAAAAAAAAA0071 /* GoalStore.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0048 /* SplashView.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0049 /* OnboardingView.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0050 /* OnboardingPage.swift in Sources */,
@@ -273,6 +300,11 @@
 				AAAAAAAAAAAAAAAAAAAA0054 /* BalanceChartView.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0055 /* Transaction.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0056 /* TransactionStore.swift in Sources */,
+				AAAAAAAAAAAAAAAAAAAA0079 /* AllTransactionsView.swift in Sources */,
+				AAAAAAAAAAAAAAAAAAAA007B /* TransactionDetailView.swift in Sources */,
+				AAAAAAAAAAAAAAAAAAAA0073 /* GoalModel.swift in Sources */,
+				AAAAAAAAAAAAAAAAAAAA0075 /* GoalsView.swift in Sources */,
+				AAAAAAAAAAAAAAAAAAAA0077 /* GoalDetailView.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0066 /* StatsView.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0069 /* SettingsView.swift in Sources */,
 				AAAAAAAAAAAAAAAAAAAA0057 /* WebContainerView.swift in Sources */,

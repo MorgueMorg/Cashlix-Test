@@ -3,196 +3,418 @@ import SwiftUI
 struct FinanceView: View {
     @EnvironmentObject var store: TransactionStore
     @EnvironmentObject var settings: AppSettings
-    @State private var showAddSheet = false
+    @EnvironmentObject var goalStore: GoalStore
 
-    // Current-month expenses for budget tracking
-    private var monthlyExpenses: Double {
-        let cal = Calendar.current
-        let start = cal.date(from: cal.dateComponents([.year, .month], from: Date()))!
-        return store.transactions
-            .filter { $0.type == .expense && $0.date >= start }
-            .reduce(0) { $0 + $1.amount }
-    }
+    @State private var showAddSheet        = false
+    @State private var showAllTransactions = false
+    @State private var addType: TransactionType = .expense
+    @State private var insightIndex        = 0
+    @State private var insightTimer: Timer?
+
+    // MARK: - Body
 
     var body: some View {
         NavigationView {
-            ZStack(alignment: .bottomTrailing) {
-                Color(.systemGroupedBackground).ignoresSafeArea()
-
-                ScrollView {
-                    LazyVStack(spacing: 16) {
-                        balanceCard
-                        if settings.monthlyBudget > 0 { budgetCard }
-                        chartCard
-                        transactionList
-                    }
-                    .padding(.horizontal, 16)
-                    .padding(.top, 8)
-                    .padding(.bottom, 96)
+            ScrollView {
+                VStack(spacing: 20) {
+                    greetingHeader
+                    balanceHeroCard
+                    quickActionRow
+                    insightsCard
+                    if !goalStore.activeGoals.isEmpty { goalsWidget }
+                    if settings.monthlyBudget > 0     { budgetWidget }
+                    weeklyChartCard
+                    recentTransactionsCard
                 }
-
-                // FAB
-                Button { showAddSheet = true } label: {
-                    Image(systemName: "plus")
-                        .font(.title2.bold())
-                        .foregroundColor(.white)
-                        .frame(width: 58, height: 58)
-                        .background(Color.blue)
-                        .clipShape(Circle())
-                        .shadow(color: .blue.opacity(0.35), radius: 8, x: 0, y: 4)
-                }
-                .padding(.trailing, 20)
-                .padding(.bottom, 28)
+                .padding(.horizontal)
+                .padding(.bottom, 24)
             }
-            .navigationTitle("My Finances")
+            .background(Color(.systemGroupedBackground))
+            .navigationTitle("Dashboard")
             .navigationBarTitleDisplayMode(.large)
-        }
-        .sheet(isPresented: $showAddSheet) {
-            AddTransactionSheet()
+            .toolbar {
+                ToolbarItem(placement: .navigationBarTrailing) {
+                    Button { showAllTransactions = true } label: {
+                        Image(systemName: "list.bullet.rectangle")
+                    }
+                }
+            }
+            .sheet(isPresented: $showAddSheet) {
+                AddTransactionSheet(presetType: addType)
+                    .environmentObject(store)
+                    .environmentObject(settings)
+            }
+            .sheet(isPresented: $showAllTransactions) {
+                NavigationView {
+                    AllTransactionsView()
+                        .environmentObject(store)
+                        .environmentObject(settings)
+                }
+            }
+            .onAppear  { startInsightTimer() }
+            .onDisappear { insightTimer?.invalidate() }
         }
     }
 
-    // MARK: - Balance Card
+    // MARK: Greeting Header
 
-    private var balanceCard: some View {
-        VStack(spacing: 18) {
-            VStack(spacing: 6) {
-                Text("Total Balance")
+    private var greetingHeader: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 2) {
+                Text(greeting)
                     .font(.subheadline)
                     .foregroundColor(.secondary)
-
-                Text(settings.formatAmount(store.balance))
-                    .font(.system(size: 38, weight: .bold, design: .rounded))
-                    .foregroundColor(store.balance >= 0 ? .green : .red)
+                Text(Date().formatted(.dateTime.weekday(.wide).month(.wide).day()))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
             }
-
-            Divider()
-
-            HStack(spacing: 0) {
-                summaryItem(label: "Income", value: store.totalIncome, color: .green,
-                            icon: "arrow.down.circle.fill")
-                Divider().frame(height: 44)
-                summaryItem(label: "Expenses", value: store.totalExpenses, color: .red,
-                            icon: "arrow.up.circle.fill")
-            }
+            Spacer()
+            Text(Date().formatted(.dateTime.month(.abbreviated)))
+                .font(.caption2)
+                .fontWeight(.bold)
+                .foregroundColor(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.blue)
+                .cornerRadius(8)
         }
-        .padding(20)
-        .background(Color(.systemBackground))
-        .cornerRadius(18)
-        .shadow(color: .black.opacity(0.06), radius: 10, x: 0, y: 3)
+        .padding(.top, 4)
     }
 
-    private func summaryItem(label: String, value: Double, color: Color, icon: String) -> some View {
-        HStack(spacing: 8) {
-            Image(systemName: icon).font(.title3).foregroundColor(color)
-            VStack(alignment: .leading, spacing: 2) {
-                Text(label).font(.caption).foregroundColor(.secondary)
-                Text(settings.formatAmount(value)).font(.subheadline.bold()).foregroundColor(color)
+    private var greeting: String {
+        let h = Calendar.current.component(.hour, from: Date())
+        if h < 12 { return "Good morning 👋" }
+        if h < 17 { return "Good afternoon 👋" }
+        return "Good evening 👋"
+    }
+
+    // MARK: Balance Hero Card
+
+    private var balanceHeroCard: some View {
+        ZStack {
+            LinearGradient(
+                colors: store.balance >= 0
+                    ? [Color(red: 0.10, green: 0.45, blue: 0.95),
+                       Color(red: 0.05, green: 0.28, blue: 0.78)]
+                    : [Color(red: 0.85, green: 0.20, blue: 0.20),
+                       Color(red: 0.60, green: 0.10, blue: 0.10)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+            VStack(spacing: 16) {
+                VStack(spacing: 4) {
+                    Text("Total Balance")
+                        .font(.subheadline)
+                        .foregroundColor(.white.opacity(0.8))
+                    Text(settings.formatAmount(store.balance))
+                        .font(.system(size: 40, weight: .bold))
+                        .foregroundColor(.white)
+                        .minimumScaleFactor(0.6)
+                        .lineLimit(1)
+                }
+                HStack(spacing: 0) {
+                    miniStat("arrow.down.circle.fill", "Income",   settings.formatAmount(store.monthlyIncome),    .white.opacity(0.95))
+                    Rectangle().fill(Color.white.opacity(0.25)).frame(width: 1, height: 36)
+                    miniStat("arrow.up.circle.fill",   "Expenses", settings.formatAmount(store.monthlyExpenses),  .white.opacity(0.95))
+                    Rectangle().fill(Color.white.opacity(0.25)).frame(width: 1, height: 36)
+                    let netColor: Color = store.monthlySavings >= 0
+                        ? Color(red: 0.6, green: 1.0, blue: 0.6)
+                        : Color(red: 1.0, green: 0.6, blue: 0.6)
+                    miniStat("plusminus", "Net", settings.formatAmount(store.monthlySavings), netColor)
+                }
+                .padding(.horizontal, 8)
+                .padding(.vertical, 10)
+                .background(Color.white.opacity(0.12))
+                .cornerRadius(14)
             }
+            .padding(.vertical, 24)
+            .padding(.horizontal, 20)
+        }
+        .cornerRadius(22)
+        .shadow(color: Color.black.opacity(0.15), radius: 12, x: 0, y: 6)
+    }
+
+    private func miniStat(_ icon: String, _ label: String, _ value: String, _ color: Color) -> some View {
+        VStack(spacing: 4) {
+            HStack(spacing: 3) {
+                Image(systemName: icon).font(.caption2).foregroundColor(color)
+                Text(label).font(.caption2).foregroundColor(.white.opacity(0.7))
+            }
+            Text(value).font(.caption).fontWeight(.semibold).foregroundColor(color)
+                .lineLimit(1).minimumScaleFactor(0.6)
         }
         .frame(maxWidth: .infinity)
     }
 
-    // MARK: - Budget Card
+    // MARK: Quick Actions
 
-    private var budgetCard: some View {
-        let budget = settings.monthlyBudget
-        let spent = monthlyExpenses
-        let ratio = budget > 0 ? min(spent / budget, 1.0) : 0
-        let remaining = max(budget - spent, 0)
-        let isOverBudget = spent > budget
-        let barColor: Color = ratio < 0.75 ? .green : (ratio < 1.0 ? .orange : .red)
+    private var quickActionRow: some View {
+        HStack(spacing: 12) {
+            quickAction("plus.circle.fill",  "Add Income",  .green)  { addType = .income;  showAddSheet = true }
+            quickAction("minus.circle.fill", "Add Expense", .red)    { addType = .expense; showAddSheet = true }
+            quickAction("list.bullet",       "History",     .blue)   { showAllTransactions = true }
+            quickAction("flag.fill",         "Goals",       .orange) { }
+        }
+    }
 
-        return VStack(spacing: 12) {
-            HStack {
-                Image(systemName: "target").foregroundColor(.orange)
-                Text("Monthly Budget").font(.headline)
-                Spacer()
-                Text(isOverBudget ? "Over budget!" : "\(settings.formatAmount(remaining)) left")
-                    .font(.caption.bold())
-                    .foregroundColor(isOverBudget ? .red : .green)
+    private func quickAction(_ icon: String, _ label: String, _ color: Color, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            VStack(spacing: 8) {
+                ZStack {
+                    RoundedRectangle(cornerRadius: 14)
+                        .fill(color.opacity(0.12))
+                        .frame(width: 52, height: 52)
+                    Image(systemName: icon)
+                        .font(.system(size: 20))
+                        .foregroundColor(color)
+                }
+                Text(label)
+                    .font(.caption2)
+                    .fontWeight(.medium)
+                    .foregroundColor(.secondary)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
+            .frame(maxWidth: .infinity)
+        }
+        .buttonStyle(.plain)
+    }
 
+    // MARK: Insights Card
+
+    private var insights: [String] {
+        store.generateInsights(settings: settings)
+    }
+
+    private var insightsCard: some View {
+        Button {
+            withAnimation(.easeInOut(duration: 0.3)) {
+                insightIndex = (insightIndex + 1) % max(insights.count, 1)
+            }
+        } label: {
+            VStack(alignment: .leading, spacing: 0) {
+                HStack {
+                    Label("Smart Insight", systemImage: "lightbulb.fill")
+                        .font(Font.subheadline.weight(.semibold))
+                        .foregroundColor(.orange)
+                    Spacer()
+                    HStack(spacing: 4) {
+                        ForEach(0..<min(insights.count, 5), id: \.self) { i in
+                            Circle()
+                                .fill(i == insightIndex % max(insights.count, 1)
+                                      ? Color.orange : Color(.systemGray4))
+                                .frame(width: 5, height: 5)
+                                .animation(.easeInOut, value: insightIndex)
+                        }
+                    }
+                    Image(systemName: "chevron.right")
+                        .font(.caption2)
+                        .foregroundColor(.secondary)
+                }
+                .padding(.horizontal, 16)
+                .padding(.top, 14)
+                .padding(.bottom, 8)
+
+                Text(insights.isEmpty ? "Add transactions to see insights." : insights[insightIndex % max(insights.count, 1)])
+                    .font(.subheadline)
+                    .foregroundColor(.primary)
+                    .fixedSize(horizontal: false, vertical: true)
+                    .padding(.horizontal, 16)
+                    .padding(.bottom, 14)
+            }
+            .frame(maxWidth: .infinity, alignment: .leading)
+            .background(
+                RoundedRectangle(cornerRadius: 16)
+                    .fill(Color.orange.opacity(0.07))
+                    .overlay(RoundedRectangle(cornerRadius: 16)
+                        .stroke(Color.orange.opacity(0.2), lineWidth: 1))
+            )
+        }
+        .buttonStyle(.plain)
+    }
+
+    private func startInsightTimer() {
+        insightTimer?.invalidate()
+        guard !insights.isEmpty else { return }
+        insightTimer = Timer.scheduledTimer(withTimeInterval: 5, repeats: true) { _ in
+            withAnimation(.easeInOut(duration: 0.4)) {
+                insightIndex = (insightIndex + 1) % insights.count
+            }
+        }
+    }
+
+    // MARK: Goals Widget
+
+    private var goalsWidget: some View {
+        VStack(alignment: .leading, spacing: 12) {
+            HStack {
+                Label("Goals", systemImage: "flag.fill")
+                    .font(.headline)
+                Spacer()
+                Text("\(goalStore.completedCount)/\(goalStore.goals.count) done")
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            ForEach(goalStore.activeGoals.prefix(2)) { goal in
+                GoalMiniRow(goal: goal)
+                    .environmentObject(settings)
+            }
+        }
+        .padding()
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(16)
+    }
+
+    // MARK: Budget Widget
+
+    private var budgetWidget: some View {
+        let used    = store.monthlyExpenses
+        let budget  = settings.monthlyBudget
+        let ratio   = min(used / max(budget, 1), 1.0)
+        let over    = used > budget
+        let barColor: Color = ratio < 0.75 ? .green : ratio < 1.0 ? .orange : .red
+
+        return VStack(alignment: .leading, spacing: 10) {
+            HStack {
+                Label("Monthly Budget", systemImage: "target")
+                    .font(.headline)
+                Spacer()
+                Text(over ? "Over budget!" : "\(Int((1 - ratio) * 100))% left")
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(over ? .red : .secondary)
+            }
             GeometryReader { geo in
                 ZStack(alignment: .leading) {
-                    Capsule().fill(Color.secondary.opacity(0.15)).frame(height: 10)
-                    Capsule()
+                    RoundedRectangle(cornerRadius: 6)
+                        .fill(Color(.systemGray5))
+                        .frame(height: 10)
+                    RoundedRectangle(cornerRadius: 6)
                         .fill(barColor)
                         .frame(width: geo.size.width * CGFloat(ratio), height: 10)
                         .animation(.spring(), value: ratio)
                 }
             }
             .frame(height: 10)
-
             HStack {
-                Text("Spent: \(settings.formatAmount(spent))")
+                Text(settings.formatAmount(used) + " spent")
                     .font(.caption).foregroundColor(.secondary)
                 Spacer()
-                Text("Limit: \(settings.formatAmount(budget))")
+                Text(settings.formatAmount(budget) + " budget")
                     .font(.caption).foregroundColor(.secondary)
             }
         }
-        .padding(18)
-        .background(Color(.systemBackground))
-        .cornerRadius(18)
-        .shadow(color: .black.opacity(0.06), radius: 10, x: 0, y: 3)
+        .padding()
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
 
-    // MARK: - Chart Card
+    // MARK: Weekly Chart Card
 
-    private var chartCard: some View {
-        VStack(alignment: .leading, spacing: 14) {
+    private var weeklyChartCard: some View {
+        let data    = store.dailyNet(days: 7)
+        let weekNet = data.reduce(0) { $0 + $1.net }
+        return VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Last 7 Days").font(.headline)
+                Label("Last 7 Days", systemImage: "chart.bar.fill")
+                    .font(.headline)
                 Spacer()
-                Text("Daily Net").font(.caption).foregroundColor(.secondary)
+                Text((weekNet >= 0 ? "+" : "") + settings.formatAmount(weekNet))
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .foregroundColor(weekNet >= 0 ? .green : .red)
             }
-            BalanceChartView(data: store.dailyNet(days: 7)).frame(height: 110)
+            BalanceChartView(dailyData: data)
+                .frame(height: 90)
         }
-        .padding(18)
-        .background(Color(.systemBackground))
-        .cornerRadius(18)
-        .shadow(color: .black.opacity(0.06), radius: 10, x: 0, y: 3)
+        .padding()
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
 
-    // MARK: - Transaction List
+    // MARK: Recent Transactions
 
-    private var transactionList: some View {
-        VStack(alignment: .leading, spacing: 14) {
+    private var recentTransactionsCard: some View {
+        VStack(alignment: .leading, spacing: 0) {
             HStack {
-                Text("Transactions").font(.headline)
+                Label("Recent", systemImage: "clock.fill")
+                    .font(.headline)
                 Spacer()
-                Text("\(store.transactions.count) total").font(.caption).foregroundColor(.secondary)
+                Button { showAllTransactions = true } label: {
+                    Text("See All")
+                        .font(.subheadline)
+                        .foregroundColor(.blue)
+                }
             }
+            .padding(.horizontal, 16)
+            .padding(.top, 16)
+            .padding(.bottom, 12)
 
             if store.transactions.isEmpty {
-                emptyState
+                VStack(spacing: 12) {
+                    Image(systemName: "tray")
+                        .font(.system(size: 36))
+                        .foregroundColor(.secondary.opacity(0.4))
+                    Text("No transactions yet")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                    Button { addType = .expense; showAddSheet = true } label: {
+                        Text("Add first transaction")
+                            .font(.subheadline).foregroundColor(.blue)
+                    }
+                }
+                .frame(maxWidth: .infinity)
+                .padding(.vertical, 24)
             } else {
                 VStack(spacing: 0) {
-                    ForEach(store.transactions) { t in
-                        TransactionRow(transaction: t)
-                        if t.id != store.transactions.last?.id {
-                            Divider().padding(.leading, 72)
+                    ForEach(Array(store.transactions.prefix(5))) { tx in
+                        TxRowCompact(transaction: tx)
+                            .environmentObject(settings)
+                        if tx.id != store.transactions.prefix(5).last?.id {
+                            Divider().padding(.leading, 64)
                         }
                     }
                 }
-                .background(Color(.systemBackground))
-                .cornerRadius(18)
-                .shadow(color: .black.opacity(0.06), radius: 10, x: 0, y: 3)
             }
         }
+        .background(Color(.secondarySystemGroupedBackground))
+        .cornerRadius(16)
     }
+}
 
-    private var emptyState: some View {
-        VStack(spacing: 14) {
-            Image(systemName: "tray.fill").font(.system(size: 40)).foregroundColor(.secondary.opacity(0.5))
-            Text("No transactions yet").font(.subheadline).foregroundColor(.secondary)
-            Text("Tap + to add your first entry").font(.caption).foregroundColor(.secondary.opacity(0.7))
+// MARK: - Goal Mini Row
+
+struct GoalMiniRow: View {
+    let goal: FinancialGoal
+    @EnvironmentObject var settings: AppSettings
+
+    var body: some View {
+        HStack(spacing: 10) {
+            ZStack {
+                Circle()
+                    .fill(goal.color.color.opacity(0.15))
+                    .frame(width: 34, height: 34)
+                Image(systemName: goal.icon.sfSymbol)
+                    .font(.system(size: 14))
+                    .foregroundColor(goal.color.color)
+            }
+            VStack(alignment: .leading, spacing: 3) {
+                Text(goal.name)
+                    .font(.subheadline).fontWeight(.medium).lineLimit(1)
+                GeometryReader { geo in
+                    ZStack(alignment: .leading) {
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(Color(.systemGray5)).frame(height: 5)
+                        RoundedRectangle(cornerRadius: 3)
+                            .fill(goal.color.color)
+                            .frame(width: geo.size.width * CGFloat(goal.progress), height: 5)
+                    }
+                }
+                .frame(height: 5)
+            }
+            Spacer()
+            Text("\(Int(goal.progress * 100))%")
+                .font(.caption).fontWeight(.semibold)
+                .foregroundColor(goal.color.color)
         }
-        .frame(maxWidth: .infinity)
-        .padding(.vertical, 44)
-        .background(Color(.systemBackground))
-        .cornerRadius(18)
-        .shadow(color: .black.opacity(0.06), radius: 10, x: 0, y: 3)
     }
 }
